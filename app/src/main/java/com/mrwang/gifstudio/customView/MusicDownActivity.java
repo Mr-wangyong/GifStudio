@@ -14,13 +14,13 @@ import com.mrwang.gifstudio.R;
  */
 public class MusicDownActivity extends AppCompatActivity {
 
-  private DownProgress progress;
+  private DownProgress2 progress;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.music_down);
-    progress = (DownProgress) findViewById(R.id.progress);
+    progress = (DownProgress2) findViewById(R.id.progress);
     progress.setMax(100);
     progress.setProgress(100);
     progress.setText("50%");

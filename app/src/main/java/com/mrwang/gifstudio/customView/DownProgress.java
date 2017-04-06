@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 /**
+ * 合成一张bitmap 然后在bitmap上面画图来
  * User: chengwangyong(chengwangyong@blinnnk.com)
  * Date: 2017/3/30
  * Time: 下午7:02
@@ -153,8 +154,9 @@ public class DownProgress extends View {
 
   private void createRoundBitmap() {
     roundBitmap =
-        Bitmap.createBitmap((int) bgRect.width(), (int) bgRect.height(), Bitmap.Config.ARGB_8888);
+        Bitmap.createBitmap((int) bgRect.width(), (int) bgRect.height(), Bitmap.Config.ARGB_4444);
     Paint paint = new Paint();
+    paint.setAntiAlias(true);
     paint.setColor(Color.YELLOW);
     paint.setStyle(Paint.Style.FILL);
     Canvas canvas = new Canvas(roundBitmap);

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -122,6 +124,7 @@ public class DownProgress2 extends View {
     this.progress = progress;
     postInvalidate();
   }
+  private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP);
 
   public void setMax(int max) {
     this.max = max;
@@ -134,34 +137,32 @@ public class DownProgress2 extends View {
   @Override
   protected synchronized void onDraw(Canvas canvas) {
 
-    //
-    canvas.drawRoundRect(bgRect, height / 2f, height / 2f, outSidePaint);
-    // if (progress < 5) {
-    // progress = 5;
-    // }
+
+
     float radio = progress * 1.0f / max;
     float progressPosX = (int) (width * radio);
-    // if (progress > 95) {
-    // floats[2] = round;
-    // floats[3] = round;
-    // floats[4] = round;
-    // floats[5] = round;
-    // } else {
-    // floats[2] = 0;
-    // floats[3] = 0;
-    // floats[4] = 0;
-    // floats[5] = 0;
-    // }
-    // drawable.setBounds(bgSize * 2, bgSize + dp2px(0.5f), (int) progressPosX - bgSize,
-    // height - bgSize *
-    // 2);
-    // drawable.draw(canvas);
-    if (progressPosX < 5) {
-      middlePaint.setStrokeWidth(middleWidth*(progressPosX/5f));
-    }else{
-      middlePaint.setStrokeWidth(middleWidth);
-    }
-    canvas.drawLine(middlePaint.getStrokeWidth(),height/2,progressPosX,height/2,middlePaint);
+
+
+    int layer = canvas.saveLayer(0, 0, width, height, null, Canvas.MATRIX_SAVE_FLAG |
+        Canvas.CLIP_SAVE_FLAG |
+        Canvas.HAS_ALPHA_LAYER_SAVE_FLAG |
+        Canvas.FULL_COLOR_LAYER_SAVE_FLAG |
+        Canvas.CLIP_TO_LAYER_SAVE_FLAG);
+
+    outSidePaint.setStyle(Paint.Style.STROKE);
+    outSidePaint.setColor(Color.YELLOW);
+    outSidePaint.setStyle(Paint.Style.FILL);
+    outSidePaint.setStrokeWidth(middleWidth);
+    outSidePaint.setStrokeCap(Paint.Cap.ROUND);
+    canvas.drawLine(middleWidth,height/2,progressPosX,height/2,outSidePaint);
+    outSidePaint.setColor(Color.BLACK);
+    outSidePaint.setXfermode(xfermode);
+    outSidePaint.setStrokeWidth(bgSize);
+    outSidePaint.setStrokeJoin(Paint.Join.ROUND);
+    outSidePaint.setStyle(Paint.Style.STROKE);
+    canvas.drawRoundRect(bgRect, height / 2f, height / 2f, outSidePaint);
+    outSidePaint.setXfermode(null);
+    canvas.restoreToCount(layer);
     canvas.drawText(text, width / 2, textBaseY, textPaint);
   }
 
