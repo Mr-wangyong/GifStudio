@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:background="@android:color/darker_gray">
+
+  <ImageView
+      android:id="@+id/iv"
+      android:layout_width="80dp"
+      android:layout_height="80dp"
+      android:background="@drawable/shape"
+      android:src="@mipmap/livestart_game"/>
+
+  <TextView
+      android:id="@+id/tv"
+      android:layout_width="wrap_content"
+      android:layout_height="20dp"
+      android:layout_marginTop="20dp"
+      android:background="@drawable/text_shape"
+      android:gravity="center"
+      android:paddingLeft="15dp"
+      android:paddingRight="15dp"
+      android:visibility="invisible"
+      android:text="直播"/>
+</merge>

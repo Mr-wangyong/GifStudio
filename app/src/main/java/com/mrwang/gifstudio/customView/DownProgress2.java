@@ -124,6 +124,7 @@ public class DownProgress2 extends View {
     this.progress = progress;
     postInvalidate();
   }
+
   private PorterDuffXfermode xfermode = new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP);
 
   public void setMax(int max) {
@@ -152,17 +153,18 @@ public class DownProgress2 extends View {
     outSidePaint.setStyle(Paint.Style.STROKE);
     outSidePaint.setColor(Color.YELLOW);
     outSidePaint.setStyle(Paint.Style.FILL);
-    outSidePaint.setStrokeWidth(middleWidth);
+    outSidePaint.setStrokeWidth(middleWidth*2);
     outSidePaint.setStrokeCap(Paint.Cap.ROUND);
-    canvas.drawLine(middleWidth,height/2,progressPosX,height/2,outSidePaint);
+    canvas.drawLine(middleWidth, height / 2,
+        progressPosX > middleWidth ? progressPosX : middleWidth, height / 2, outSidePaint);
     outSidePaint.setColor(Color.BLACK);
-    outSidePaint.setXfermode(xfermode);
+    // outSidePaint.setXfermode(xfermode);
     outSidePaint.setStrokeWidth(bgSize);
     outSidePaint.setStrokeJoin(Paint.Join.ROUND);
     outSidePaint.setStyle(Paint.Style.STROKE);
     canvas.drawRoundRect(bgRect, height / 2f, height / 2f, outSidePaint);
-    outSidePaint.setXfermode(null);
-    canvas.restoreToCount(layer);
+    // outSidePaint.setXfermode(null);
+    // canvas.restoreToCount(layer);
     canvas.drawText(text, width / 2, textBaseY, textPaint);
   }
 
