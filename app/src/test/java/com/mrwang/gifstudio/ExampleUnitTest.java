@@ -2,15 +2,7 @@ package com.mrwang.gifstudio;
 
 import android.util.SparseArray;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.mrwang.gifstudio.SparseArrayParse.SeatUser;
-import com.mrwang.gifstudio.SparseArrayParse.SparseArrayTypeAdapter;
-
 import org.junit.Test;
-
-import java.lang.reflect.Type;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -28,11 +20,24 @@ public class ExampleUnitTest {
 
 
   public static void main(String[] args){
-    Type sparseArrayType = new TypeToken<SparseArray<SeatUser>>() {}.getType();
-    Gson sparseGson = new GsonBuilder()
-        .registerTypeAdapter(sparseArrayType, new SparseArrayTypeAdapter<>(SeatUser.class))
-        .create();
-    SparseArray<SeatUser> sparseArray = sparseGson.fromJson(json, SparseArray.class);
-    System.out.print("sparseArray="+sparseArray.toString());
+//    Type sparseArrayType = new TypeToken<SparseArray<SeatUser>>() {}.getType();
+//    Gson sparseGson = new GsonBuilder()
+//        .registerTypeAdapter(sparseArrayType, new SparseArrayTypeAdapter<>(SeatUser.class))
+//        .create();
+//    SparseArray<SeatUser> sparseArray = sparseGson.fromJson(json, SparseArray.class);
+//    System.out.print("sparseArray="+sparseArray.toString());
+    method1();
+  }
+
+  private static void method1() {
+    SparseArray<String> sparseArray=new SparseArray<>();
+    sparseArray.put(1,"1");
+    sparseArray.put(5,"5");
+    sparseArray.put(10,"10");
+
+    for (int i = 0; i < sparseArray.size(); i++) {
+      int key = sparseArray.keyAt(i);
+      System.out.println(" key="+key+" value="+sparseArray.get(key));
+    }
   }
 }
