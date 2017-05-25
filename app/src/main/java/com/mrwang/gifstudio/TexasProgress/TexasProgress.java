@@ -3,12 +3,13 @@ package com.mrwang.gifstudio.TexasProgress;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +37,11 @@ public class TexasProgress extends FrameLayout {
   private ImageView allInImage;
   private int buttonSpace;
   private int height;
-  private int width;
   private BitmapDrawable bg;
   private int progress;
   private Paint textPaint;
   private int start;
+  private int totalPgWidth;
 
   public TexasProgress(Context context) {
     super(context);
@@ -88,16 +89,18 @@ public class TexasProgress extends FrameLayout {
     });
 
     textPaint = new Paint();
-    textPaint.setColor(Color.parseColor("#FFD370"));
+    textPaint.setColor(ContextCompat.getColor(getContext(), R.color.progress_color));
     textPaint.setStyle(Paint.Style.FILL);
     textPaint.setTextAlign(Paint.Align.CENTER);
+    textPaint.setStrokeWidth(1);
+
     textPaint.setTextSize(SystemUtils.dpToPx(getContext(), 10));
     setWillNotDraw(false);
   }
 
   public void setProgress(@IntRange(from = 0, to = 100) int progress) {
     this.progress = progress;
-    this.progressWidth = (int) (progress / (max + 1.0f) * width);
+    this.progressWidth = Math.round(progress / (max + 1.0f) * totalPgWidth);
     invalidate();
   }
 
@@ -107,21 +110,23 @@ public class TexasProgress extends FrameLayout {
 
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    this.width = w;
+    int width = w - getPaddingLeft();
     this.height = h;
-    setSize(w, h / 2);
+    setSize(width, h / 2);
+    totalPgWidth = width - spaceWidth - height / 4 - buttonSpace - rightSpace;
     super.onSizeChanged(w, h, oldw, oldh);
   }
 
   private void setSize(int w, int h) {
     bg.setBounds(0, 0, w, h);
-    slode.setBounds(0, 0, h, h);
+    slode.setBounds(0, 0, h - SystemUtils.dpToPx(getContext(), 5),
+        h - SystemUtils.dpToPx(getContext(), 5));
     LayoutParams layoutParams = (LayoutParams) allInImage.getLayoutParams();
     layoutParams.height = h / 2 - SystemUtils.dpToPx(getContext(), 4);
-    layoutParams.leftMargin = w - rightSpace - layoutParams.height * 3 / 2;
+    layoutParams.leftMargin = w - rightSpace - spaceWidth - layoutParams.height * 3;
     layoutParams.topMargin = h + h / 6;
     allInImage.setLayoutParams(layoutParams);
-    showButtom.setBounds(0, 0, w / 5, h);
+    showButtom.setBounds(0, 0, w / 4, h);
   }
 
   @Override
@@ -142,22 +147,25 @@ public class TexasProgress extends FrameLayout {
   }
 
   private boolean setMoveX(float x) {
-    if (x > spaceWidth && x < width - spaceWidth - height / 2 - buttonSpace) {
-      progressWidth = (int) x;
-      invalidate();
-      return true;
+    x = x - height / 8;
+    if (x < spaceWidth) {
+      x = spaceWidth;
     }
-    return false;
+    if (x > totalPgWidth) {
+      x = totalPgWidth;
+    }
+    progressWidth = Math.round(x);
+    invalidate();
+    return true;
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
-    int width = getWidth() - rightSpace;
-    int height = getHeight();
     canvas.save();
-    canvas.translate(0, height / 2);
+    canvas.translate(getPaddingLeft(), height / 2);
     bg.draw(canvas);
-    blackProgress.setBounds(spaceWidth, 0, width - spaceWidth - buttonSpace, height / 4);
+    blackProgress.setBounds(spaceWidth, 0, totalPgWidth + spaceWidth, height / 4);
+
     canvas.save();
     canvas.translate(0, height / 16);
     blackProgress.draw(canvas);
@@ -166,25 +174,45 @@ public class TexasProgress extends FrameLayout {
     float v = progressWidth;
     if (v < spaceWidth) {
       v = spaceWidth;
-    } else if (v > width - spaceWidth - height / 4 - buttonSpace) {
-      v = width - spaceWidth - height / 4 - buttonSpace;
+    } else if (v >= totalPgWidth) {
+      v = totalPgWidth;
     }
-    yellowProgress.setBounds(0, 0, (int) v, height / 4);
+    yellowProgress.setBounds(0, 0, Math.round(v), height / 4);
 
     canvas.save();
     canvas.translate(spaceWidth, height / 16);
     yellowProgress.draw(canvas);
-    canvas.translate((int) v - height / 4, -height / 8);
+    canvas.restore();
+
+    canvas.save();
+    canvas.translate(Math.round(v - slode.getBounds().width() / 4),
+        -height / 4 + slode.getBounds().height() / 2);
     slode.draw(canvas);
-    canvas.translate(-height / 8, -height / 3 - SystemUtils.dpToPx(getContext(), 5));
+
+    canvas.translate(-height / 8, -height / 2.8f);
     showButtom.draw(canvas);
+    float v1 =
+        (v > spaceWidth ? v : 0) / (totalPgWidth) * (max - start)
+            + start;
+    float v2 = v1 % start;
+    int round = v2 > start / 2 ? Math.round(v1 - v2) : Math.round(v1 - v2 + start);
+    Log.i(TAG, "v=" + v + " string=" + v1 + " start=" + totalPgWidth + " end="
+        + (v > spaceWidth ? v : 0) / (totalPgWidth) + " round=" + round);
+    // textPaint.setStyle(Paint.Style.FILL);
+    // textPaint.setColor(ContextCompat.getColor(getContext(), R.color.progress_color));
     canvas.drawText(String.valueOf(
-        ((int) (v - spaceWidth / (width - spaceWidth - height / 4 - buttonSpace) * max + start)
-            * 100)
-            / 100),
+        round),
         showButtom.getBounds().centerX(),
         showButtom.getBounds().centerY() - height / 32,
         textPaint);
+    // textPaint.setStyle(Paint.Style.STROKE);
+    // textPaint.setColor(Color.BLACK);
+    // canvas.drawText(String.valueOf(
+    // round),
+    // showButtom.getBounds().centerX(),
+    // showButtom.getBounds().centerY() - height / 32,
+    // textPaint);
+
     canvas.restore();
     canvas.restore();
 
@@ -194,4 +222,5 @@ public class TexasProgress extends FrameLayout {
   public void setStart(int start) {
     this.start = start;
   }
+
 }

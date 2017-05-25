@@ -5,4 +5,5 @@
   <color name="colorAccent">#FF4081</color>
   <color name="startColor">#00ff00</color>
   <color name="endColor">#00ffffff</color>
+  <color name="progress_color">#FFD370</color>
 </resources>
