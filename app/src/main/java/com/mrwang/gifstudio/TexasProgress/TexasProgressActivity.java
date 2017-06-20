@@ -20,7 +20,7 @@ public class TexasProgressActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.texas_progress);
     progress = (TexasProgress) findViewById(R.id.progress);
-    progress.setMax(10000);
+    progress.setMax(100000);
     progress.setStart(1000);
 //    progress.setOnClickListener(new View.OnClickListener() {
 //      @Override

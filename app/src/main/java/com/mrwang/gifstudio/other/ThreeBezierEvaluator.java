@@ -1,4 +1,4 @@
-package com.mrwang.gifstudio;
+package com.mrwang.gifstudio.other;
 
 import android.animation.TypeEvaluator;
 import android.graphics.PointF;

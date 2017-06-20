@@ -1,7 +1,9 @@
-package com.mrwang.gifstudio;
+package com.mrwang.gifstudio.other;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import com.mrwang.gifstudio.R;
 
 public class MainActivity extends AppCompatActivity {
 

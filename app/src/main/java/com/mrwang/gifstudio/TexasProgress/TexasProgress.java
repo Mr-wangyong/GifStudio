@@ -3,57 +3,58 @@ package com.mrwang.gifstudio.TexasProgress;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.annotation.IntRange;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.mrwang.gifstudio.R;
-import com.mrwang.gifstudio.SystemUtils;
+import com.mrwang.gifstudio.other.SystemUtils;
 
 /**
  * User: chengwangyong(chengwangyong@blinnnk.com)
  * Date:2017/5/15
  * Time: 上午10:50
  */
-public class TexasProgress extends FrameLayout {
-  private static final String TAG = "TexasProgress";
+public class TexasProgress extends RelativeLayout {
   private int progressWidth;
-  private int max = 100;
+  public int max = 100;
   private BitmapDrawable yellowProgress;
   private BitmapDrawable blackProgress;
   private BitmapDrawable slode;
   private BitmapDrawable showButtom;
-  private int spaceWidth;
+  private int leftWidth;
   private int rightSpace;
-  private ImageView allInImage;
+  // private ImageView allInImage;
   private int buttonSpace;
   private int height;
   private BitmapDrawable bg;
   private int progress;
   private Paint textPaint;
   private int start;
-  private int totalPgWidth;
+  private boolean showFull;
+  private int strokeColor;
+  private int totalPgWidth;// 能滑动的区域最大值
+  private int progressNum;
+  private int textColor;
+  private int betLower;
+  public boolean isMax;
+  // private DownProgress.OnProgress onProgress;
 
   public TexasProgress(Context context) {
     super(context);
     init();
   }
 
-  public TexasProgress(Context context, @Nullable AttributeSet attrs) {
+  public TexasProgress(Context context,  AttributeSet attrs) {
     super(context, attrs);
     init();
   }
 
-  public TexasProgress(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+  public TexasProgress(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init();
   }
@@ -71,35 +72,27 @@ public class TexasProgress extends FrameLayout {
     bg = new BitmapDrawable(getResources(),
         BitmapFactory.decodeResource(getResources(), R.drawable.bottom_pour_bar_bg));
     // setBackgroundResource(R.drawable.bottom_pour_bar_bg);
-    spaceWidth = SystemUtils.dpToPx(getContext(), 15);
-    rightSpace = SystemUtils.dpToPx(getContext(), 50);
+    leftWidth = SystemUtils.dpToPx(getContext(), 25);
+    rightSpace = SystemUtils.dpToPx(getContext(), 120);
 
     buttonSpace = SystemUtils.dpToPx(getContext(), 10);
 
-    LayoutParams params =
-        new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-    allInImage = new ImageView(getContext());
-    allInImage.setImageResource(R.drawable.all_in_progress);
-    addView(allInImage, params);
-    allInImage.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        setProgress(max);
-      }
-    });
-
     textPaint = new Paint();
-    textPaint.setColor(ContextCompat.getColor(getContext(), R.color.progress_color));
+    textColor = Color.parseColor("#FFD370");
+    textPaint.setColor(textColor);
     textPaint.setStyle(Paint.Style.FILL);
     textPaint.setTextAlign(Paint.Align.CENTER);
-    textPaint.setStrokeWidth(1);
-
-    textPaint.setTextSize(SystemUtils.dpToPx(getContext(), 10));
+    // textPaint.setTypeface(FontsUtils.getNumTypeface());
+    // textPaint.setTextSize(getResources().getDimensionPixelSize(R.dimen.big_georgia));
+    // strokeColor = ContextCompat.getColor(getContext(), R.color.opacity_7_black);
+    int strokeWidth = SystemUtils.dpToPx(getContext(), 1);
+    textPaint.setStrokeWidth(strokeWidth);
     setWillNotDraw(false);
   }
 
-  public void setProgress(@IntRange(from = 0, to = 100) int progress) {
+  public void setProgress(int progress) {
     this.progress = progress;
+    isMax = progress == max;
     this.progressWidth = Math.round(progress / (max + 1.0f) * totalPgWidth);
     invalidate();
   }
@@ -113,7 +106,7 @@ public class TexasProgress extends FrameLayout {
     int width = w - getPaddingLeft();
     this.height = h;
     setSize(width, h / 2);
-    totalPgWidth = width - spaceWidth - height / 4 - buttonSpace - rightSpace;
+    totalPgWidth = width - rightSpace - height / 4;
     super.onSizeChanged(w, h, oldw, oldh);
   }
 
@@ -121,11 +114,6 @@ public class TexasProgress extends FrameLayout {
     bg.setBounds(0, 0, w, h);
     slode.setBounds(0, 0, h - SystemUtils.dpToPx(getContext(), 5),
         h - SystemUtils.dpToPx(getContext(), 5));
-    LayoutParams layoutParams = (LayoutParams) allInImage.getLayoutParams();
-    layoutParams.height = h / 2 - SystemUtils.dpToPx(getContext(), 4);
-    layoutParams.leftMargin = w - rightSpace - spaceWidth - layoutParams.height * 3;
-    layoutParams.topMargin = h + h / 6;
-    allInImage.setLayoutParams(layoutParams);
     showButtom.setBounds(0, 0, w / 4, h);
   }
 
@@ -141,18 +129,23 @@ public class TexasProgress extends FrameLayout {
         return setMoveX(x);
       case MotionEvent.ACTION_CANCEL:
       case MotionEvent.ACTION_UP:
+      case MotionEvent.ACTION_OUTSIDE:
+        // 隐藏进度条
         break;
     }
-    return super.onTouchEvent(event);
+    return true;
   }
 
   private boolean setMoveX(float x) {
     x = x - height / 8;
-    if (x < spaceWidth) {
-      x = spaceWidth;
+    if (x < leftWidth) {
+      x = leftWidth;
     }
-    if (x > totalPgWidth) {
-      x = totalPgWidth;
+    if (x >= totalPgWidth + leftWidth) {
+      x = totalPgWidth + leftWidth;
+      isMax = true;
+    } else {
+      isMax = false;
     }
     progressWidth = Math.round(x);
     invalidate();
@@ -164,23 +157,32 @@ public class TexasProgress extends FrameLayout {
     canvas.save();
     canvas.translate(getPaddingLeft(), height / 2);
     bg.draw(canvas);
-    blackProgress.setBounds(spaceWidth, 0, totalPgWidth + spaceWidth, height / 4);
+    blackProgress.setBounds(leftWidth, 0, totalPgWidth + leftWidth * 2, height / 4);
 
     canvas.save();
     canvas.translate(0, height / 16);
     blackProgress.draw(canvas);
     canvas.restore();
 
-    float v = progressWidth;
-    if (v < spaceWidth) {
-      v = spaceWidth;
-    } else if (v >= totalPgWidth) {
+    float v;
+    if (!showFull) {
+      v = progressWidth;
+      if (v < leftWidth) {
+        v = leftWidth;
+        isMax = false;
+      } else if (v > totalPgWidth + leftWidth) {
+        v = totalPgWidth + leftWidth;
+        isMax = true;
+      }
+    } else {
       v = totalPgWidth;
+      isMax = true;
     }
+
     yellowProgress.setBounds(0, 0, Math.round(v), height / 4);
 
     canvas.save();
-    canvas.translate(spaceWidth, height / 16);
+    canvas.translate(leftWidth, height / 16);
     yellowProgress.draw(canvas);
     canvas.restore();
 
@@ -189,38 +191,84 @@ public class TexasProgress extends FrameLayout {
         -height / 4 + slode.getBounds().height() / 2);
     slode.draw(canvas);
 
-    canvas.translate(-height / 8, -height / 2.8f);
+    canvas.translate(-height / 6, -height / 2.8f);
     showButtom.draw(canvas);
-    float v1 =
-        (v > spaceWidth ? v : 0) / (totalPgWidth) * (max - start)
-            + start;
-    float v2 = v1 % start;
-    int round = v2 > start / 2 ? Math.round(v1 - v2) : Math.round(v1 - v2 + start);
-    Log.i(TAG, "v=" + v + " string=" + v1 + " start=" + totalPgWidth + " end="
-        + (v > spaceWidth ? v : 0) / (totalPgWidth) + " round=" + round);
-    // textPaint.setStyle(Paint.Style.FILL);
-    // textPaint.setColor(ContextCompat.getColor(getContext(), R.color.progress_color));
-    canvas.drawText(String.valueOf(
-        round),
+
+    // if (isMax) {
+    // progressNum = max;
+    // } else {
+    // float v1 = (v > leftWidth ? v : 0) / (totalPgWidth) * (max - start)
+    // + start;
+    // float v2 = v1 % betLower;
+    // progressNum = v2 > betLower / 2 ? Math.round(v1 - v2) : Math.round(v1 - v2 + betLower);
+    //
+    // //新增需要
+    // //前 50% 20% 后50% 80%
+    //
+    // }
+    // String s = UnitUtils.formatNum(progressNum);
+    // LogUtils.i("progressNum =" + progressNum + " max=" + max);
+    // 先计算占比长度
+    float speedWidth = v - leftWidth;
+    // 计算比例 0~100
+    float speed = speedWidth / totalPgWidth;
+
+
+    float num;
+    int sumNum = max - start;
+    if (speed < 0.5f) {// 前 50% 20%
+      num = speed * 2 * sumNum * 0.2f + start;
+    } else {// 前 50% 剩余的 80%
+      num = speed * sumNum * 0.8f + sumNum * 0.2f+start;
+    }
+
+    Log.i("TAG", " speedWidth=" + speedWidth + " speed=" + speed + " num=" + num);
+    textPaint.setStyle(Paint.Style.FILL_AND_STROKE); // 描边种类
+    textPaint.setColor(strokeColor);
+    String s = String.valueOf(num);
+    canvas.drawText(s,
         showButtom.getBounds().centerX(),
         showButtom.getBounds().centerY() - height / 32,
         textPaint);
-    // textPaint.setStyle(Paint.Style.STROKE);
-    // textPaint.setColor(Color.BLACK);
-    // canvas.drawText(String.valueOf(
-    // round),
-    // showButtom.getBounds().centerX(),
-    // showButtom.getBounds().centerY() - height / 32,
-    // textPaint);
+
+    // if (onProgress != null) {
+    // onProgress.onProgress(progressNum + betLower);
+    // }
+    textPaint.setColor(textColor);
+    textPaint.setStyle(Paint.Style.FILL);
+    canvas.drawText(s,
+        showButtom.getBounds().centerX(),
+        showButtom.getBounds().centerY() - height / 32,
+        textPaint);
+    canvas.restore();
 
     canvas.restore();
-    canvas.restore();
-
     super.onDraw(canvas);
   }
 
   public void setStart(int start) {
+    setProgress(0);
     this.start = start;
   }
 
+  public void showFull(boolean showFull) {
+    this.showFull = showFull;
+  }
+
+  public int getProgress() {
+    return progress;
+  }
+
+
+  public float getProgressNum() {
+    return progressNum;
+  }
+
+  public void setBetLower(int betLower) {
+    this.betLower = betLower;
+  }
+
+  // public void setOnProgress(DownProgress.OnProgress progress) {
+  // this.onProgress = progress;
+  // }
 }

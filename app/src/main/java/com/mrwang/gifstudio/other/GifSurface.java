@@ -1,4 +1,4 @@
-package com.mrwang.gifstudio;
+package com.mrwang.gifstudio.other;
 
 import android.annotation.TargetApi;
 import android.content.Context;
