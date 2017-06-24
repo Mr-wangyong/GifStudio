@@ -13,7 +13,7 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
-    <activity android:name="com.mrwang.gifstudio.lame.MediaCodeActivity">
+    <activity android:name=".lame.MediaCodeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

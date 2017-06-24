@@ -31,7 +31,7 @@ public class AudioCodec {
   private boolean codeOver = false;// 解码结束
   private Thread decoderThread;
   private String targePath;
-  private int audioLength;
+  private long audioLength;
 
   public static AudioCodec newInstance() {
     return new AudioCodec();
@@ -71,7 +71,7 @@ public class AudioCodec {
           // 比特率 声音中的比特率是指将模拟声音信号转换成数字声音信号后，单位时间内的二进制数据量，是间接衡量音频质量的一个指标
           format.setInteger(MediaFormat.KEY_BIT_RATE, AudioFormat.ENCODING_PCM_16BIT);
           try {
-            audioLength = format.getInteger(MediaFormat.KEY_DURATION);
+            audioLength = format.getLong(MediaFormat.KEY_DURATION);
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -175,7 +175,7 @@ public class AudioCodec {
           if (codeOver) {
             PCMToMp3.pcmToMp3(srcPath, targePath, chunkPCMDataContainer, audioLength);
             if (onCompleteListener != null) {
-              onCompleteListener.completed();
+              onCompleteListener.completed(targePath);
             }
           }
         } catch (Exception e) {
@@ -183,7 +183,7 @@ public class AudioCodec {
           codeOver = true;
           PCMToMp3.pcmToMp3(srcPath, targePath, chunkPCMDataContainer, audioLength);
           if (onCompleteListener != null) {
-            onCompleteListener.completed();
+            onCompleteListener.completed(targePath);
           }
         }
       }
@@ -243,7 +243,7 @@ public class AudioCodec {
       if (codeOver) {
         PCMToMp3.pcmToMp3(srcPath, targePath, chunkPCMDataContainer, audioLength);
         if (onCompleteListener != null) {
-          onCompleteListener.completed();
+          onCompleteListener.completed(targePath);
         }
       }
     }
@@ -255,8 +255,8 @@ public class AudioCodec {
       try {
         if (decoderThread != null && decoderThread.isAlive()) {
           decoderThread.interrupt();
-          codeOver = true;
         }
+        codeOver = true;
         if (mediaDecode != null) {
           mediaDecode.stop();
           mediaDecode.release();
@@ -281,22 +281,34 @@ public class AudioCodec {
 
     @Override
     public void run() {
-      while (!codeOver) {
-        if (Build.VERSION.SDK_INT >= 21) {
-          srcAudioFormatToPCMHigherApi();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-          srcAudioFormatToPCM();
-        }
-      }
-      if (chunkPCMDataContainer == null || chunkPCMDataContainer.isEmpty()) {
-        Log.i("TAG", "解码失败 不支持的格式 name=" + srcPath);
+      decode();
+    }
+  }
+
+  public void decode() {
+    Log.i("TAG", "开始解码 name=" + srcPath + " thread=" + Thread.currentThread().getName());
+    while (!codeOver) {
+      if (Build.VERSION.SDK_INT >= 21) {
+        srcAudioFormatToPCMHigherApi();
+      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        srcAudioFormatToPCM();
       }
     }
+    if (chunkPCMDataContainer == null || chunkPCMDataContainer.isEmpty()) {
+      Log.i("TAG", "解码失败 不支持的格式 name=" + srcPath);
+    }
+
+    if (onCompleteListener != null) {
+      onCompleteListener.onFinish();
+    }
+    codeOver = false;
   }
 
   /** * 解码完成回调接口 */
   public interface OnCompleteListener {
-    void completed();
+    void completed(String targePath);
+
+    void onFinish();
   }
 
   /** * 设置转码完成监听器 * @param onCompleteListener 监听器 */

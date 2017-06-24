@@ -4,11 +4,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:gravity="center"
     android:layout_height="match_parent">
 
-  <com.mrwang.gifstudio.other.GifSurface
-      android:id="@+id/surface"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
+  <!--<com.mrwang.gifstudio.other.GifSurface-->
+      <!--android:id="@+id/surface"-->
+      <!--android:layout_width="match_parent"-->
+      <!--android:layout_height="match_parent"/>-->
 
+  <com.mrwang.gifstudio.other.CustomTextView
+    android:id="@+id/tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="80dp"
+    tools:text="122dd"/>
 </LinearLayout>
