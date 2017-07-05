@@ -47,7 +47,7 @@ public class PMCToMP3Test {
     final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
     // Thread thread = new Thread(audioCodec.startAsync());
     WorkHandler handler = new WorkHandler();
-    File file = new File(path + File.separator + "android/data/com.blinnnk.thor/files/gameRes/20");
+    File file = new File(path + File.separator + "android/data/com.blinnnk.thor/files/gameRes/25");
     if (file.isDirectory() && file.listFiles() != null) {
       files = file.listFiles();
       process(files[index], audioCodec, handler);
@@ -104,10 +104,14 @@ public class PMCToMP3Test {
         // String srcPath=path + File.separator +
         // "blink_thor/audio/08bbf47bcf1846f11d2729de2201cabc";
         // String srcPath=path + File.separator + "c.mp3";
-        String srcPath = path + "/Android/data/com.blinnnk.thor/files/gameRes/20/out_20.mp3";
+        String srcPath = path + "/Android/data/com.blinnnk.thor/files/gameRes/25";
 
         File file = new File(srcPath);
-        Mp3Covert.process(file);
+        for (File file1 : file.listFiles()) {
+          if (file1.isFile()&& file1.getName().endsWith(".mp3")){
+            Mp3Covert.process(file1);
+          }
+        }
         // for (File file1 : file.listFiles()) {
         // if (file1.isDirectory()) {
         // Collection<File> files = listFiles(file1);

@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">GifStudio</string>
+  <string name="text">≤ 20000</string>
 </resources>

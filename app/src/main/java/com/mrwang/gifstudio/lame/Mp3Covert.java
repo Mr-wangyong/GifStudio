@@ -29,7 +29,7 @@ public class Mp3Covert {
   }
 
   public static void process(File srcFile) {
-    processBitRate(srcFile.getAbsolutePath());
+    //processBitRate(srcFile.getAbsolutePath());
     processSimpleRate(srcFile.getAbsolutePath());
   }
 
