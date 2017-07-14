@@ -16,8 +16,8 @@ public class MediaCodeActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.view);
     PMCToMP3Test test = new PMCToMP3Test();
-    test.test2();
+    //test.test2();
     //test.processMedia();
-    //test.test();
+    test.test();
   }
 }

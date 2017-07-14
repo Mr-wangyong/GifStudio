@@ -3,9 +3,12 @@ package com.mrwang.gifstudio.lame;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.IOException;
@@ -32,6 +35,7 @@ public class AudioCodec {
   private Thread decoderThread;
   private String targePath;
   private long audioLength;
+  private boolean isSupportHardWare;
 
   public static AudioCodec newInstance() {
     return new AudioCodec();
@@ -276,6 +280,8 @@ public class AudioCodec {
     }
   }
 
+
+
   /** * 解码线程 */
   private class DecodeRunnable implements Runnable {
 
@@ -318,5 +324,42 @@ public class AudioCodec {
 
   private void showLog(String msg) {
     Log.e("AudioCodec", msg);
+  }
+
+
+  @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+  private void checkMediaDecoder() {
+    int numCodecs = MediaCodecList.getCodecCount();
+    MediaCodecInfo mediaCodecInfo = null;
+    for (int i = 0; i < numCodecs && mediaCodecInfo == null; i++) {
+      MediaCodecInfo info = MediaCodecList.getCodecInfoAt(i);
+      if (info.isEncoder()) {
+        continue;
+      }
+      String[] types = info.getSupportedTypes();
+      boolean found = false;
+      for (int j = 0; j < types.length && !found; j++) {
+        if (types[j].equals("video/avc")) {
+          System.out.println("found");
+          found = true;
+          isSupportHardWare = found;
+          return;
+        }
+      }
+      if (!found) {
+        continue;
+      }
+      mediaCodecInfo = info;
+    }
+
+    if (mediaCodecInfo != null) {
+      int[] colorFormats = mediaCodecInfo.getCapabilitiesForType("video/avc").colorFormats;
+      if (colorFormats!=null){
+        for (int colorFormat : colorFormats) {
+          showLog("");
+        }
+      }
+    }
+
   }
 }
