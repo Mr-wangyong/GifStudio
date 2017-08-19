@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:gravity="center"
+    android:id="@+id/content"
     android:layout_height="match_parent">
+  <!--<TextView-->
+    <!--android:id="@+id/tv"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:textColor="@android:color/holo_red_dark"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:text="@string/app_name"-->
+    <!--android:layout_height="wrap_content"/>-->
+  <!--<View-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@android:color/black"/>-->
+  <com.mrwang.gifstudio.other.GifSurface
+      android:id="@+id/surface"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
 
-  <!--<com.mrwang.gifstudio.other.GifSurface-->
-      <!--android:id="@+id/surface"-->
-      <!--android:layout_width="match_parent"-->
-      <!--android:layout_height="match_parent"/>-->
-
-  <com.mrwang.gifstudio.other.CustomTextView
-    android:id="@+id/tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textSize="80dp"
-    tools:text="122dd"/>
-</LinearLayout>
+  <!--<com.mrwang.gifstudio.other.CustomTextView-->
+    <!--android:id="@+id/tv"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:textSize="80dp"-->
+    <!--tools:text="122dd"/>-->
+</RelativeLayout>

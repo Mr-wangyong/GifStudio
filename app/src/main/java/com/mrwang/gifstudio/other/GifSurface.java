@@ -3,7 +3,9 @@ package com.mrwang.gifstudio.other;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -15,12 +17,16 @@ import android.view.SurfaceView;
  * Date: 2017/3/27
  * Time: 下午1:45
  */
-public class GifSurface extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class GifSurface extends SurfaceView
+    implements
+      SurfaceHolder.Callback,
+      SurfaceHandler.OnThreadLooperPrepared {
 
   private volatile SparseArray<AnimationInterface> gifList;
   private boolean isRuning = true;
   private SurfaceHolder holder;
   private long lastUpdateTime;
+  private SurfaceHandler surfaceHandler;
 
   public GifSurface(Context context) {
     this(context, null);
@@ -53,8 +59,10 @@ public class GifSurface extends SurfaceView implements SurfaceHolder.Callback, R
 
   @Override
   public void surfaceCreated(SurfaceHolder holder) {
-    Thread thread = new Thread(this);
-    thread.start();
+    surfaceHandler = new SurfaceHandler();
+    surfaceHandler.setOnLoopPrepared(this);
+    surfaceHandler.sendEmpty(0);
+    isRuning=true;
   }
 
   @Override
@@ -70,21 +78,25 @@ public class GifSurface extends SurfaceView implements SurfaceHolder.Callback, R
 
   public void addGif(int type, AnimationInterface anim) {
     gifList.put(type, anim);
+    isRuning = true;
+    //surfaceHandler.sendEmpty(gifList.size());
   }
 
   @Override
-  public void run() {
-    while (isRuning) {
-      if (!holder.getSurface().isValid()) {
-        continue;
-      }
+  public void OnThreadLooperPrepared() {
+    if (isRuning) {
+//      Log.i("TAG", "OnThreadLooperPrepared");
+//      if (!holder.getSurface().isValid()) {
+//        surfaceHandler.sendEmpty(gifList.size());
+//        return;
+//      }
       float deltaTime = (System.nanoTime() - lastUpdateTime) / 1000000000.0f;
       lastUpdateTime = System.nanoTime();
       Canvas canvas = null;
       try {
         canvas = holder.lockCanvas();
         if (canvas != null) {
-          // mHolder.unlockCanvasAndPost(canvas);
+          canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
           for (int i = 0; i < gifList.size(); i++) {
             AnimationInterface anim = gifList.valueAt(i);
             anim.update(deltaTime);
@@ -102,6 +114,8 @@ public class GifSurface extends SurfaceView implements SurfaceHolder.Callback, R
           }
         }
       }
+
+      surfaceHandler.sendEmpty(gifList.size());
     }
   }
 }

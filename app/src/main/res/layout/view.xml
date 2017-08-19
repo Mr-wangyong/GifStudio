@@ -16,6 +16,7 @@
       <!--android:layout_height="match_parent"-->
       <!--android:background="#55000000"/>-->
   <com.mrwang.gifstudio.View.DrawTextView
+    android:id="@+id/view"
     android:layout_width="100dp"
     android:layout_height="100dp"
     android:background="#cccc00cc"

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 
 import com.mrwang.gifstudio.R;
 
@@ -54,17 +53,17 @@ public class CountDownActivity extends AppCompatActivity {
     // }
     // System.out.println("sparseArray="+sparseArray.toString());
 
-    final TestView testView = (TestView) findViewById(R.id.test_view);
-
-    testView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        testView.setAnim(isClick ? new ValueAnimImp() : new FrameAnimImp());
-        Log.i("TAG", "testView Run");
-        isClick = !isClick;
-        testView.startAnim();
-      }
-    });
+//    final TestView testView = (TestView) findViewById(R.id.test_view);
+//
+//    testView.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        testView.setAnim(isClick ? new ValueAnimImp() : new FrameAnimImp());
+//        Log.i("TAG", "testView Run");
+//        isClick = !isClick;
+//        testView.startAnim();
+//      }
+//    });
   }
 
   @Override

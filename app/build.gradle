@@ -5,22 +5,29 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.mrwang.gifstudio"
-        minSdkVersion 15
-        targetSdkVersion 18
+        minSdkVersion 16
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
+            buildConfigField "String", "DOMAIN_NAME", "\"https://online.domain.com/\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug{
+            buildConfigField "String", "DOMAIN_NAME", "\"https://offline.domain.com/\""
+        }
+
     }
 
     sourceSets.main {
         jniLibs.srcDirs = ['libs']
     }
+
 }
 
 dependencies {
@@ -32,5 +39,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.Mr-wangyong:ImageFrame:v1.3.0'
+    compile 'com.github.Mr-wangyong:RetrofitCache:v1.0'
     testCompile 'junit:junit:4.12'
 }

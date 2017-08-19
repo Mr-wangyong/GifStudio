@@ -5,6 +5,7 @@
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
   <application
     android:allowBackup="true"
@@ -13,13 +14,26 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
-    <activity android:name=".lame.MediaCodeActivity">
+    <activity
+      android:name="com.mrwang.gifstudio.TextView.MainActivity"
+      android:launchMode="singleTask"
+      android:screenOrientation="portrait">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
+    <activity android:name="com.mrwang.gifstudio.TextView.StaticLayoutUI"/>
+    <activity android:name="com.mrwang.gifstudio.TextView.NormalLayoutUI"/>
+    <activity android:name="com.mrwang.gifstudio.TextView.StaticLongStringUI"/>
+    <activity android:name="com.mrwang.gifstudio.TextView.NormalLongStringUI"/>
+    <!--<activity-->
+      <!--android:name=".customView.MusicDownActivity"-->
+      <!--android:hardwareAccelerated="true"-->
+      <!--android:launchMode="singleTask"-->
+      <!--android:screenOrientation="portrait"-->
+      <!--android:windowSoftInputMode="adjustResize"/>-->
   </application>
 
 </manifest>

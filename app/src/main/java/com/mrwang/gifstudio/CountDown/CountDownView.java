@@ -35,7 +35,7 @@ public class CountDownView extends View {
   private RectF roundRect;
   private Bitmap bitmap;
   private Paint bitmapPaint;
-  public boolean isRect = true;
+  public boolean isRect = false;
   private Path path;
   private PathMeasure measure;
   private Path dst;
