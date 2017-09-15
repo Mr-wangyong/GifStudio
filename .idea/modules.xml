@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/GifStudio.iml" filepath="$PROJECT_DIR$/GifStudio.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/javastudio/javastudio.iml" filepath="$PROJECT_DIR$/javastudio/javastudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shapeview/shapeview.iml" filepath="$PROJECT_DIR$/shapeview/shapeview.iml" />
     </modules>
   </component>
 </project>

@@ -47,6 +47,7 @@ public class ExpAnim implements AnimationInterface {
     this.startColor = startColor;
     this.endColor = endColor;
     init();
+
   }
 
   private void init() {

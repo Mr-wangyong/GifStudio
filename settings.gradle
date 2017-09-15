@@ -1,1 +1,1 @@
-include ':app', ':javastudio'
+include ':app', ':javastudio', ':shapeview'

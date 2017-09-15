@@ -12,6 +12,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
+
 /**
  * User: chengwangyong(chengwangyong@blinnnk.com)
  * Date: 2017/5/8
@@ -21,7 +22,6 @@ public class BullAnim {
   private static AnimatorSet set;
 
   private static void startBullAnim(final ImageView bullPokerBg, final ImageView bullPokerView) {
-
     ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
     valueAnimator.setDuration(500);
     valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
